@@ -190,4 +190,9 @@ public class Field {
 		}
 		return numberOfTileInState;
 	}
+	
+	private void openAdjacentTiles(int row, int column) {
+		
+	}
+	
 }

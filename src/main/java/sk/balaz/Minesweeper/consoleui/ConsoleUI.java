@@ -102,15 +102,28 @@ public class ConsoleUI implements UserInterface {
      * Reads line from console and does the action on a playing field according to input string.
      */
     private void processInput() {
+    	printUserInvitation();
+    	try {
+        	handleInput(readLine());
+		} catch (WrongFormatException e) {
+			System.err.println(e.getMessage());
+		}
+    }
+    
+    private void finishGame() {
+    	System.out.println("Finishing Game");
+        System.exit(0);
+    }
+    
+    private boolean isGameFinished() {
+    	return field.getState() == GameState.SOLVED || field.getState() == GameState.FAILED;
+    }
+    
+    private void handleInput(String userEnteredInput) throws WrongFormatException {
     	
     	Pattern exitPattern = Pattern.compile("(X)");
     	Pattern markPattern = Pattern.compile("M([A-I])([0-8])");
     	Pattern openPattern = Pattern.compile("O([A-I])([0-8])");
-    	
-    	String userEnteredInput;
-    	
-    	System.out.println("Please enter your selection <X> EXIT, <MA1> MARK, <OB4> OPEN :");
-    	userEnteredInput = readLine();
     	
     	Matcher  exitMatcher = exitPattern.matcher(userEnteredInput);
     	Matcher  markMatcher = markPattern.matcher(userEnteredInput);
@@ -127,14 +140,12 @@ public class ConsoleUI implements UserInterface {
     		RowColumn rowColumn = rowColumnTranslator.translate(userEnteredInput);
     		field.markTile(rowColumn.getRow(), rowColumn.getColumn());
     	}
+    	else {
+			throw new WrongFormatException(String.format("%s is not valid input", userEnteredInput));
+		}
     }
     
-    private void finishGame() {
-    	System.out.println("Finishing Game");
-        System.exit(0);
-    }
-    
-    private boolean isGameFinished() {
-    	return field.getState() == GameState.SOLVED || field.getState() == GameState.FAILED;
+    private void printUserInvitation() {
+    	System.out.println("Please enter your selection <X> EXIT, <MA1> MARK, <OB4> OPEN :");
     }
 }
