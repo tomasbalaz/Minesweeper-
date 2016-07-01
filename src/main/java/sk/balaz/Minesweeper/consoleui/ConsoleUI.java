@@ -95,6 +95,7 @@ public class ConsoleUI implements UserInterface {
     		}
     		System.out.println();
     	}
+		System.out.println("Mines count: " + field.getRemainingMineCount());
     }
     
     /**

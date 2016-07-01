@@ -154,6 +154,11 @@ public class Field {
 	public int getMineCount() {
 		return mineCount;
 	}
+	
+	public int getRemainingMineCount() {
+		
+		return mineCount - getNumberOf(Tile.State.MARKED);
+	}
 
 	private void generateMines() {
 		Random randomX = new Random();
