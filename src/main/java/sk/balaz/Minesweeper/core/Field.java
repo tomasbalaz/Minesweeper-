@@ -2,6 +2,8 @@ package sk.balaz.Minesweeper.core;
 
 import java.util.Random;
 
+import sk.balaz.Minesweeper.core.Tile.State;
+
 /**
  * Field represents playing field and game logic.
  */
@@ -97,7 +99,10 @@ public class Field {
 	 * @return true if game is solved, false otherwise
 	 */
 	private boolean isSolved() {
-		throw new UnsupportedOperationException("Method isSolved not yet implemented");
+		int allClues = rowCount * columnCount;
+		int openedClues = getNumberOf(State.OPEN);
+		
+		return (allClues - openedClues) == mineCount;
 	}
 
 	/**
@@ -149,28 +154,40 @@ public class Field {
 	public int getMineCount() {
 		return mineCount;
 	}
-	
+
 	private void generateMines() {
 		Random randomX = new Random();
 		Random randomY = new Random();
-		
-		for(int mines = 0; mines < mineCount; mines++) {
+
+		for (int mines = 0; mines < mineCount; mines++) {
 			int x = randomX.nextInt(rowCount);
 			int y = randomY.nextInt(columnCount);
-			if(tiles[x][y] == null) {
+			if (tiles[x][y] == null) {
 				tiles[x][y] = new Mine();
 			}
 		}
 	}
-	
+
 	private void fillWithClues() {
-		for(int row = 0; row < rowCount; row++) {
-			for(int column = 0; column < columnCount; column++) {
-				if(tiles[row][column] == null) {
+		for (int row = 0; row < rowCount; row++) {
+			for (int column = 0; column < columnCount; column++) {
+				if (tiles[row][column] == null) {
 					tiles[row][column] = new Clue(countAdjacentMines(row, column));
 				}
 			}
 		}
 	}
-	
+
+	private int getNumberOf(Tile.State state) {
+		int numberOfTileInState = 0;
+		for (int row = 0; row < rowCount; row++) {
+			for (int column = 0; column < columnCount; column++) {
+				Tile tile = tiles[row][column];
+				if (state.equals(tile.getState())) {
+					numberOfTileInState += numberOfTileInState;
+				}
+			}
+		}
+		return numberOfTileInState;
+	}
 }
