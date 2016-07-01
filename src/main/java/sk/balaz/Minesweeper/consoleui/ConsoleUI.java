@@ -12,6 +12,8 @@ import sk.balaz.Minesweeper.core.Field;
 import sk.balaz.Minesweeper.core.GameState;
 import sk.balaz.Minesweeper.core.Mine;
 import sk.balaz.Minesweeper.core.Tile;
+import sk.balaz.Minesweeper.core.translate.RowColumn;
+import sk.balaz.Minesweeper.core.translate.RowColumnTranslator;
 
 /**
  * Console user interface.
@@ -23,7 +25,9 @@ public class ConsoleUI implements UserInterface {
     /** Input reader. */
     private BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     
-    private String[] alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I"};
+    
+    private RowColumnTranslator rowColumnTranslator =  new RowColumnTranslator();
+    
     
     /**
      * Reads line of text from the reader.
@@ -69,15 +73,15 @@ public class ConsoleUI implements UserInterface {
     	}
     	System.out.println();
     	
-    	for(int i = 0; i < field.getRowCount(); i++) {
-    		System.out.print(getNextAlphabet(i));
-    		for(int j = 0; j < field.getColumnCount(); j++) {
+    	for(int row = 0; row < field.getRowCount(); row++) {
+    		System.out.print(rowColumnTranslator.getRowCharacter(row));
+    		for(int column = 0; column < field.getColumnCount(); column++) {
     			
-    			Tile tile = field.getTile(i, j);
+    			Tile tile = field.getTile(row, column);
     			
     			if(tile instanceof Mine && Tile.State.OPEN.equals(tile.getState())) {
     				System.out.print(" X ");
-    				System.out.print(field.getTile(i, j));
+    				System.out.print(field.getTile(row, column));
     			}
     			else if(tile instanceof Clue && Tile.State.OPEN.equals(tile.getState())) {
     				Clue clue = (Clue)tile;
@@ -112,65 +116,19 @@ public class ConsoleUI implements UserInterface {
     	userEnteredInput = readLine();
     	
     	Matcher  exitMatcher = exitPattern.matcher(userEnteredInput);
+    	Matcher  markMatcher = markPattern.matcher(userEnteredInput);
     	Matcher  openMatcher = openPattern.matcher(userEnteredInput);
     	
     	if(exitMatcher.matches()) {
     		field.setState(GameState.FAILED);
     	}
-    	else if(openMatcher.matches()) {
-    		
-    		char[] fieldAccessIndexes = getFieldAccessIndexes(userEnteredInput);
-    		int rowIndex = translateRowCharToNumber(fieldAccessIndexes[0]);
-    		int columnIndex = Character.getNumericValue(fieldAccessIndexes[1]);
-    				
-    		field.openTile(rowIndex, columnIndex);	
+    	else if(openMatcher.matches()) {    		
+    		RowColumn rowColumn = rowColumnTranslator.translate(userEnteredInput);
+    		field.openTile(rowColumn.getRow(), rowColumn.getColumn());
     	}
-    }
-    
-    private char[] getFieldAccessIndexes(String userEnteredInput) {
-    	char[] fieldAccessIndexes = new char[2];
-    	fieldAccessIndexes[0] = userEnteredInput.charAt(1);
-    	fieldAccessIndexes[1] = userEnteredInput.charAt(2);
-
-    	return fieldAccessIndexes;
-    }
-    
-    private int translateRowCharToNumber(char rowChar) {
-    	
-    	switch (rowChar) {
-		case 'A':
-			return 0;
-			
-		case 'B':
-			return 1;
-			
-		case 'C':
-			return 2;
-			
-		case 'D':
-			return 3;
-			
-		case 'E':
-			return 4;
-			
-		case 'F':
-			return 5;
-			
-		case 'G':
-			return 6;
-			
-		case 'H':
-			return 7;
-			
-		case 'I':
-			return 8;
-			
-		default:
-			return 1000;
-		}
-    }
-    
-    private String getNextAlphabet(int index) {
-    	return alphabet[index];
+    	else if(markMatcher.matches()) {    		
+    		RowColumn rowColumn = rowColumnTranslator.translate(userEnteredInput);
+    		field.markTile(rowColumn.getRow(), rowColumn.getColumn());
+    	}
     }
 }

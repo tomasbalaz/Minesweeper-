@@ -78,9 +78,9 @@ public class Field {
 	 */
 	public void markTile(int row, int column) {
 		final Tile tile = tiles[row][column];
-		if (Tile.State.CLOSED.equals(tile)) {
+		if (Tile.State.CLOSED.equals(tile.getState())) {
 			tile.setState(Tile.State.MARKED);
-		} else if (Tile.State.MARKED.equals(tile)) {
+		} else if (Tile.State.MARKED.equals(tile.getState())) {
 			tile.setState(Tile.State.CLOSED);
 		}
 	}
