@@ -51,12 +51,9 @@ public class ConsoleUI implements UserInterface {
             update();
             processInput();
             
-            if(field.getState() == GameState.SOLVED || field.getState() == GameState.FAILED) {
-            	System.out.println("Finishing Game");
-                System.exit(0);
+            if(isGameFinished()) {
+            	finishGame();
             }
-            
-            //throw new UnsupportedOperationException("Resolve the game state - winning or loosing condition.");
         } while(true);
     }
     
@@ -130,5 +127,14 @@ public class ConsoleUI implements UserInterface {
     		RowColumn rowColumn = rowColumnTranslator.translate(userEnteredInput);
     		field.markTile(rowColumn.getRow(), rowColumn.getColumn());
     	}
+    }
+    
+    private void finishGame() {
+    	System.out.println("Finishing Game");
+        System.exit(0);
+    }
+    
+    private boolean isGameFinished() {
+    	return field.getState() == GameState.SOLVED || field.getState() == GameState.FAILED;
     }
 }
